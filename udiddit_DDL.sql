@@ -20,7 +20,8 @@ CREATE TABLE "posts"(
     "text_content" TEXT DEFAULT NULL,
     "topic_id" INTEGER,
     "user_id" INTEGER,
-    CONSTRAINT "url_or_text" CHECK(("url" IS NOT NULL AND "text_content" IS NULL) OR ("url" IS NULL AND "text_content" IS NOT NULL)),
+    CONSTRAINT "url_or_text" CHECK(("url" IS NOT NULL AND "text_content" IS NULL)
+    OR ("url" IS NULL AND "text_content" IS NOT NULL)),
     CONSTRAINT "delete_posts" FOREIGN KEY ("topic_id") REFERENCES "topics" ON DELETE CASCADE,
     CONSTRAINT "dissociate_post" FOREIGN KEY ("user_id") REFERENCES "users" ON DELETE SET NULL
 );
@@ -28,6 +29,12 @@ CREATE TABLE "posts"(
 CREATE TABLE "comments"(
     "id" SERIAL PRIMARY KEY,
     "text" TEXT NOT NULL
+    "post_id" INTEGER,
+    "user_id" INTEGER,
+    "parent_id" INTEGER, 
+    CONSTRAINT "delete_comments" FOREIGN KEY ("post_id") REFERENCES "posts" ON DELETE CASCADE,
+    CONSTRAINT "dissociate_comment" FOREIGN KEY ("user_id") REFERENCES "users" ON DELETE SET NULL,
+    CONSTRAINT "child_comment" FOREIGN KEY ("parent_id") REFERENCES "comments" ON DELETE CASCADE
 );
 
 CREATE TABLE "votes"(
