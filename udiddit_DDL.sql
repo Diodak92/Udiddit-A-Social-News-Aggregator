@@ -2,6 +2,7 @@
 CREATE TABLE "users"(
     "id" SERIAL PRIMARY KEY,
     "username" VARCHAR(25) UNIQUE NOT NULL,
+    "last_login" TIMESTAMP,
     CONSTRAINT EMPTY_USER CHECK(LENGTH(TRIM("username")) > 0)
 );
 
@@ -18,6 +19,7 @@ CREATE TABLE "posts"(
     "title" VARCHAR(100) NOT NULL,
     "url" VARCHAR(2048) DEFAULT NULL,
     "text_content" TEXT DEFAULT NULL,
+    "created_on" TIMESTAMP,
     "topic_id" INTEGER,
     "user_id" INTEGER,
     CONSTRAINT "url_or_text" CHECK(("url" IS NOT NULL AND "text_content" IS NULL)
@@ -28,10 +30,11 @@ CREATE TABLE "posts"(
 
 CREATE TABLE "comments"(
     "id" SERIAL PRIMARY KEY,
-    "text" TEXT NOT NULL
+    "text" TEXT NOT NULL,
+    "created_on" TIMESTAMP, 
     "post_id" INTEGER,
     "user_id" INTEGER,
-    "parent_id" INTEGER, 
+    "parent_id" INTEGER,
     CONSTRAINT "delete_comments" FOREIGN KEY ("post_id") REFERENCES "posts" ON DELETE CASCADE,
     CONSTRAINT "dissociate_comment" FOREIGN KEY ("user_id") REFERENCES "users" ON DELETE SET NULL,
     CONSTRAINT "child_comment" FOREIGN KEY ("parent_id") REFERENCES "comments" ON DELETE CASCADE
