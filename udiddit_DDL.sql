@@ -1,10 +1,11 @@
 -- create users table
 CREATE TABLE "users"(
     "id" SERIAL PRIMARY KEY,
-    "username" VARCHAR(25) UNIQUE NOT NULL,
+    "username" VARCHAR(25) NOT NULL,
     "last_login" TIMESTAMP,
     CONSTRAINT EMPTY_USER CHECK(LENGTH(TRIM("username")) > 0)
 );
+CREATE UNIQUE INDEX ON "users" (LOWER("username"));
 
 -- create topics table
 CREATE TABLE "topics"(
@@ -12,6 +13,7 @@ CREATE TABLE "topics"(
     "name" VARCHAR(30) UNIQUE NOT NULL,
     "description" VARCHAR(500) DEFAULT NULL
 );
+CREATE INDEX ON "topics" (LOWER("name") VARCHAR_PATTERN_OPS);
 
 -- create posts table
 CREATE TABLE "posts"(
@@ -27,6 +29,8 @@ CREATE TABLE "posts"(
     CONSTRAINT "delete_posts" FOREIGN KEY ("topic_id") REFERENCES "topics" ON DELETE CASCADE,
     CONSTRAINT "dissociate_post" FOREIGN KEY ("user_id") REFERENCES "users" ON DELETE SET NULL
 );
+CREATE INDEX "find_posts_on_topic" ON "posts" ("topic_id");
+CREATE INDEX "find_user_posts" ON "posts" ("user_id");
 
 CREATE TABLE "comments"(
     "id" SERIAL PRIMARY KEY,
@@ -39,6 +43,7 @@ CREATE TABLE "comments"(
     CONSTRAINT "dissociate_comment" FOREIGN KEY ("user_id") REFERENCES "users" ON DELETE SET NULL,
     CONSTRAINT "child_comment" FOREIGN KEY ("parent_id") REFERENCES "comments" ON DELETE CASCADE
 );
+CREATE INDEX "find_user_comments" ON "comments" ("user_id");
 
 CREATE TABLE "votes"(
     "id" SERIAL PRIMARY KEY,
