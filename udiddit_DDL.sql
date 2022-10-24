@@ -17,7 +17,7 @@ CREATE INDEX ON "topics" (LOWER("name") VARCHAR_PATTERN_OPS);
 
 -- create posts table
 CREATE TABLE "posts"(
-    "id" SERIAL PRIMARY KEY,
+    "id" BIGSERIAL PRIMARY KEY,
     "title" VARCHAR(100) NOT NULL,
     "url" VARCHAR(2048) DEFAULT NULL,
     "text_content" TEXT DEFAULT NULL,
@@ -34,9 +34,9 @@ CREATE INDEX "find_user_posts" ON "posts" ("user_id");
 
 CREATE TABLE "comments"(
     "id" SERIAL PRIMARY KEY,
-    "text" TEXT NOT NULL,
+    "text_content" TEXT NOT NULL,
     "created_on" TIMESTAMP, 
-    "post_id" INTEGER,
+    "post_id" BIGINT,
     "user_id" INTEGER,
     "parent_id" INTEGER,
     CONSTRAINT "delete_comments" FOREIGN KEY ("post_id") REFERENCES "posts" ON DELETE CASCADE,
@@ -49,7 +49,7 @@ CREATE TABLE "votes"(
     "id" SERIAL PRIMARY KEY,
     "value" SMALLINT,
     "user_id" INTEGER,
-    "post_id" INTEGER,
+    "post_id" BIGINT,
     CONSTRAINT UP_DOWN_VOTE CHECK("value" = -1 OR "value" = 1),
     CONSTRAINT "dissociate_user" FOREIGN KEY ("user_id") REFERENCES "users" ON DELETE SET NULL,
     CONSTRAINT "delete_votes" FOREIGN KEY ("post_id") REFERENCES "posts" ON DELETE CASCADE
