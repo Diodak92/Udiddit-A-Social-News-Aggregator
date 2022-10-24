@@ -11,7 +11,8 @@ CREATE UNIQUE INDEX ON "users" (LOWER("username"));
 CREATE TABLE "topics"(
     "id" SERIAL PRIMARY KEY,
     "name" VARCHAR(30) UNIQUE NOT NULL,
-    "description" VARCHAR(500) DEFAULT NULL
+    "description" VARCHAR(500) DEFAULT NULL,
+    CONSTRAINT EMPTY_TOPIC CHECK(LENGTH(TRIM("name")) > 0)
 );
 CREATE INDEX ON "topics" (LOWER("name") VARCHAR_PATTERN_OPS);
 
@@ -26,6 +27,7 @@ CREATE TABLE "posts"(
     "user_id" INTEGER,
     CONSTRAINT "url_or_text" CHECK(("url" IS NOT NULL AND "text_content" IS NULL)
     OR ("url" IS NULL AND "text_content" IS NOT NULL)),
+    CONSTRAINT EMPTY_TITLE CHECK(LENGTH(TRIM("title")) > 0),
     CONSTRAINT "delete_posts" FOREIGN KEY ("topic_id") REFERENCES "topics" ON DELETE CASCADE,
     CONSTRAINT "dissociate_post" FOREIGN KEY ("user_id") REFERENCES "users" ON DELETE SET NULL
 );
@@ -39,6 +41,7 @@ CREATE TABLE "comments"(
     "post_id" BIGINT,
     "user_id" INTEGER,
     "parent_id" INTEGER,
+    CONSTRAINT EMPTY_TEXT_CONTENT CHECK(LENGTH(TRIM("text_content")) > 0),
     CONSTRAINT "delete_comments" FOREIGN KEY ("post_id") REFERENCES "posts" ON DELETE CASCADE,
     CONSTRAINT "dissociate_comment" FOREIGN KEY ("user_id") REFERENCES "users" ON DELETE SET NULL,
     CONSTRAINT "child_comment" FOREIGN KEY ("parent_id") REFERENCES "comments" ON DELETE CASCADE
