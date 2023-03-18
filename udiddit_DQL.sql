@@ -22,6 +22,14 @@ SELECT *
 FROM users
 WHERE username = 'Angelo_Erdman';
 
+-- d
+-- List all topics that don’t have any posts
+SELECT topics.id AS topic_id, topics.name AS topic_name
+FROM topics
+FULL OUTER JOIN posts
+ON posts.topic_id = topics.id
+WHERE posts.topic_id IS NULL
+ORDER BY topic_id;
 
 -- e
 -- Find a topic by its name
